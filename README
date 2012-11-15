@@ -1,0 +1,7 @@
+Allows uploading torrents automatically to a remote deluge client.
+
+Planned to allow cleaning of torrents based on certain rules. Some of this is implemented, but not tested
+
+Currently you have to modify the source to change "settings" (monitor location, client location, etc.). Planned to read from a config file. Other options can be set by command line
+
+Eventually this will be deamonized in some way as well, maybe with systemd support, but that's a bit of a ways out.
