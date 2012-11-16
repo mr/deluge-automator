@@ -2,6 +2,33 @@ Allows uploading torrents automatically to a remote deluge client.
 
 Planned to allow cleaning of torrents based on certain rules. Some of this is implemented, but not tested
 
-Currently you have to modify the source to change "settings" (monitor location, client location, etc.). Planned to read from a config file. Other options can be set by command line
+Plan to have other options sent by command line
 
 Eventually this will be deamonized in some way as well, maybe with systemd support, but that's a bit of a ways out.
+
+
+---------------------------------------------------
+
+Now supports a config file.
+
+Config file usage:
+
+Entries are of the format "key=value"
+
+One key, value pair per line, extraneous lines are allowed, but not recommended. They will still be processed and will take up time and memory
+
+Keys:
+
+"host": Host of deluged
+"port": Port of deluged
+"username": Login username
+"password": Login password
+"monitordir": The directory that will be monitored for .torrent files
+
+Example Config file:
+
+host=somehost.com
+port=1234
+username=mrobinson7627
+password=supersecretpassword
+monitordir=/home/mrobinson7627/Downloads/
