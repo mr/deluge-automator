@@ -1,25 +1,26 @@
 import os
 import string
 
-from deluge.core.torrentmanager import TorrentManager
 from deluge.ui.client import client
 from deluge.error import InvalidTorrentError
+from deluge.core.core import Core
 
 
 class Monitor(object):
 
     def __init__(self):
-        self.torrentmanager = TorrentManager()
         self.trackerlist = {"animebyt.es", "bakabt.me",
                             "bitgamer.su", "speed.cd", "what.cd"}
+        self.torrentlist = []
 
     def addTorrent(self, torrent_id):
-        self.torrentlist.append(self.torrentmanager[torrent_id])
+        self.torrentlist.append(torrent_id)
 
     def cleanTorrents(self):
         for i in self.torrentlist:
             torrentchecked = self.torrentlist[i]
             privatetracker = False
+            print Core.get_torrent_status(torrentchecked) + "printed"
 
             for j in self.trackerlist:
                 if torrentchecked.get_tracker_host() == self.trackerlist[j]:

@@ -2,7 +2,7 @@ import base64
 import time
 import os
 
-#from monitor import Monitor
+from monitor import Monitor
 import monitor
 import processargs
 
@@ -21,28 +21,13 @@ d = client.connect(
     password=options['password']
 )
 
-#m = Monitor()
-
-
-def on_torrent_added_success(result, tfile):
-    print "Torrent added successfully!"
-    print "result: ", result
-    #m.addTorrent(result)
-    os.remove(tfile)
-    time.sleep(10)
-    start()
-
-
-def on_torrent_added_fail(result):
-    print "Add torrent failed!"
-    print "result: ", result
+m = Monitor()
 
 
 def start():
-    #m.cleanTorrents
-
     tfile = options['monitordir']
     while tfile == options['monitordir']:
+        m.cleanTorrents
         time.sleep(10)
         tfile = options['monitordir'] + monitor.checkdirectory(
             options['monitordir'])
@@ -56,6 +41,20 @@ def start():
 
     t.addCallback(on_torrent_added_success, tfile)
     t.addErrback(on_torrent_added_fail)
+
+
+def on_torrent_added_success(result, tfile):
+    m.addTorrent(result)
+    print "Torrent added successfully!"
+    print "result: ", result
+    os.remove(tfile)
+    time.sleep(10)
+    start()
+
+
+def on_torrent_added_fail(result):
+    print "Add torrent failed!"
+    print "result: ", result
 
 
 def on_connect_success(result):
