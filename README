@@ -4,8 +4,7 @@ Planned to allow cleaning of torrents based on certain rules. Some of this is im
 
 Plan to have other options sent by command line
 
-Eventually this will be deamonized in some way as well, maybe with systemd support, but that's a bit of a ways out.
-
+Since I've implemented SIGTERM support correctly in twisted, use supervisord to start and stop the program.
 
 ---------------------------------------------------
 
