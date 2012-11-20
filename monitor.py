@@ -12,9 +12,11 @@ class Monitor(object):
         self.trackerlist = {"animebyt.es", "bakabt.me",
                             "bitgamer.su", "speed.cd", "what.cd"}
         self.torrentlist = []
+        print "created"
 
     def addTorrent(self, torrent_id):
         self.torrentlist.append(torrent_id)
+        print "printed"
 
     def cleanTorrents(self):
         for i in self.torrentlist:

@@ -1,6 +1,7 @@
 import base64
-import time
 import os
+import signal
+import time
 
 from monitor import Monitor
 import monitor
@@ -12,7 +13,7 @@ from twisted.internet import reactor
 from deluge.log import setupLogger
 setupLogger()
 
-options = processargs.readConfig("/home/matt/.deluge-automator")
+options = processargs.readConfig(os.path.expanduser("~/.deluge-automator"))
 
 d = client.connect(
     host=options['host'],
@@ -43,13 +44,17 @@ def start():
     t.addErrback(on_torrent_added_fail)
 
 
+def handle_stop_signal(SIGNAL, stack):
+    client.disconnect()
+    reactor.stop()
+
+
 def on_torrent_added_success(result, tfile):
     m.addTorrent(result)
     print "Torrent added successfully!"
     print "result: ", result
     os.remove(tfile)
-    time.sleep(10)
-    start()
+    d.addCallback(start)
 
 
 def on_torrent_added_fail(result):
@@ -60,8 +65,7 @@ def on_torrent_added_fail(result):
 def on_connect_success(result):
     print "Connection was successful!"
     print "result: ", result
-
-    start()
+    d.addCallback(start)
 
 
 d.addCallback(on_connect_success)
@@ -73,5 +77,8 @@ def on_connect_fail(result):
 
 
 d.addErrback(on_connect_fail)
+
+signal.signal(signal.SIGTERM, handle_stop_signal)
+signal.signal(signal.SIGINT, handle_stop_signal)
 
 reactor.run()
