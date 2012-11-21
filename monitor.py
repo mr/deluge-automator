@@ -15,13 +15,13 @@ class Monitor(object):
 
     def addTorrent(self, torrent_id):
         self.torrentlist.append(torrent_id)
-        print self.torrentlist
 
     def cleanTorrents(self):
         for i in self.torrentlist:
-            torrentchecked = self.torrentlist[i]
+            print i
             privatetracker = False
-            print Core.get_torrent_status(torrentchecked)
+            print "aksjdf"
+            print Core.get_torrent_status(i)
 
             #for j in self.trackerlist:
             #    if torrentchecked.get_tracker_host() == self.trackerlist[j]:

@@ -82,5 +82,4 @@ d.addErrback(on_connect_fail)
 
 reactor.run()
 
-reactor.addSystemEventTrigger('before', 'shutdown', client.disconnect())
-reactor.addSystemEventTrigger('during', 'start', start)
+reactor.addSystemEventTrigger('before', 'shutdown', client.disconnect)
