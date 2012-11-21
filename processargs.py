@@ -6,8 +6,9 @@ def readConfig(config):
     options = {}
 
     for line in f:
-        equals = string.find(line, "=")
-        options[line[:equals]] = line[equals + 1:len(line) - 1]
+        if string.find(line, '#') != 0 or string.find(line, '\n') != 0:
+            equals = string.find(line, "=")
+            options[line[:equals]] = line[equals + 1:len(line) - 1]
 
     f.close()
 
