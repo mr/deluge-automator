@@ -3,7 +3,6 @@ import string
 
 from deluge.ui.client import client
 from deluge.error import InvalidTorrentError
-from deluge.core.core import Core
 
 
 class Monitor(object):
@@ -17,25 +16,30 @@ class Monitor(object):
         self.torrentlist.append(torrent_id)
 
     def cleanTorrents(self):
-        for i in self.torrentlist:
-            print i
-            privatetracker = False
-            print "aksjdf"
-            print Core.get_torrent_status(i)
+        if self.torrentlist:
+            for i in self.torrentlist:
+                torrent_id = i
+                status = client.core.get_torrent_status(torrent_id, ['tracker_host', 'ratio', 'active_time', 'progress'])
+                status.addCallback(cleanUp, torrent_id)
 
-            #for j in self.trackerlist:
-            #    if torrentchecked.get_tracker_host() == self.trackerlist[j]:
-            #        privatetracker = True
-            #        break
 
-            #if (torrentchecked.get_file_progress() == 1.0 and
-            #        torrentchecked.get_ratio() >= 1.0 and not privatetracker):
+def cleanUp(status, torrent_id):
+    print status
+    privatetracker = False
+    for j in self.trackerlist:
+        if status['tracker_host'] == j:
+            privatetracker = True
+            break
 
-            #    try:
-            #        client.core.remove_torrent(torrentchecked.torrent_id,
-            #                                   False)
-            #    except InvalidTorrentError:
-            #        print "Clean torrents error: torrent does not exist!"
+    #if ((status['progress'] == 1.0 and
+    #        status['ratio'] >= 1.0 and not privatetracker) or (status['progress'] == 1.0 and status['active_time'] == 10 and not privatetracker)):
+    if status['progress'] == 1:
+        try:
+            client.core.remove_torrent(torrent_id,
+                                       False)
+            self.torrentlist.remove([i for i,x in enumerate(self.torrentlist) if x == torrent_id])
+        except InvalidTorrentError:
+            print "Clean torrents error: torrent does not exist!"
 
 
 def checkdirectory(directory):

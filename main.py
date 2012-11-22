@@ -1,7 +1,5 @@
 import base64
 import os
-#import signal
-import time
 
 from monitor import Monitor
 import monitor
@@ -25,14 +23,23 @@ d = client.connect(
 m = Monitor()
 
 
-def start():
-    tfile = options['monitordir']
-    while tfile == options['monitordir']:
-        m.cleanTorrents()
-        time.sleep(10)
-        tfile = options['monitordir'] + monitor.checkdirectory(
-            options['monitordir'])
+def mainLoop():
+    tfile = os.path.expanduser(options['monitordir'])
+    if tfile[len(tfile)-1] != '/':
+        tfile += '/'
 
+    tfile = options['monitordir'] + monitor.checkdirectory(
+        options['monitordir'])
+
+    m.cleanTorrents()
+
+    if tfile == options['monitordir']:
+        reactor.callLater(10, mainLoop())
+    else:
+        readData(tfile)
+
+
+def readData(tfile):
     f = open(tfile, "rb")
     data = f.read()
     f.close()
@@ -44,16 +51,12 @@ def start():
     t.addErrback(on_torrent_added_fail)
 
 
-def handle_stop_signal(SIGNAL, stack):
-    reactor.stop()
-
-
 def on_torrent_added_success(result, tfile):
     m.addTorrent(result)
     print "Torrent added successfully!"
     print "result: ", result
     os.remove(tfile)
-    start()
+    reactor.callLater(10, mainLoop())
 
 
 def on_torrent_added_fail(result):
@@ -64,7 +67,7 @@ def on_torrent_added_fail(result):
 def on_connect_success(result):
     print "Connection was successful!"
     print "result: ", result
-    start()
+    mainLoop()
 
 
 d.addCallback(on_connect_success)
@@ -76,9 +79,6 @@ def on_connect_fail(result):
 
 
 d.addErrback(on_connect_fail)
-
-#signal.signal(signal.SIGTERM, handle_stop_signal)
-#signal.signal(signal.SIGINT, handle_stop_signal)
 
 reactor.run()
 
