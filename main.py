@@ -34,7 +34,7 @@ def mainLoop():
     m.cleanTorrents()
 
     if tfile == options['monitordir']:
-        reactor.callLater(10, mainLoop())
+        reactor.callLater(10, mainLoop)
     else:
         readData(tfile)
 

@@ -15,26 +15,24 @@ class Monitor(object):
         self.torrentlist.append(torrent_id)
 
     def cleanTorrents(self):
+        print self.torrentlist
         for torrent_id in self.torrentlist:
             status = client.core.get_torrent_status(torrent_id, ['tracker_host', 'ratio', 'active_time', 'progress'])
-            status.addCallback(cleanUp, torrent_id)
+            status.addCallback(self.cleanUp, torrent_id)
 
+    def cleanUp(self, status, torrent_id):
+        print "f;alskdjf"
+        privatetracker = False
+        for j in self.trackerlist:
+            if status['tracker_host'] == j:
+                privatetracker = True
+                break
 
-def cleanUp(status, torrent_id):
-    print status
-    privatetracker = False
-    for j in self.trackerlist:
-        if status['tracker_host'] == j:
-            privatetracker = True
-            break
-
-    if status['progress'] == 1:
-        try:
-            client.core.remove_torrent(torrent_id,
-                                       False)
-            self.torrentlist.remove([i for i,x in enumerate(self.torrentlist) if x == torrent_id])
-        except InvalidTorrentError:
-            print "Clean torrents error: torrent does not exist!"
+        if status['progress'] == 100.0:
+            d = client.core.remove_torrent(torrent_id,
+                                       True)
+            
+            self.torrentlist.remove(torrent_id)
 
 
 def checkdirectory(directory):
