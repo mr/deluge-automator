@@ -24,19 +24,23 @@ m = Monitor()
 
 
 def mainLoop():
-    tfile = os.path.expanduser(options['monitordir'])
-    if tfile[len(tfile)-1] != '/':
-        tfile += '/'
+    monitordir = os.path.expanduser(options['monitordir'])
+    if monitordir[len(monitordir)-1] != '/':
+        monitordir += '/'
 
-    tfile = options['monitordir'] + monitor.checkdirectory(
-        options['monitordir'])
+    files = monitor.checkdirectory(monitordir)
+    for i in range(0, len(files)):
+        files[i] = monitordir + files[i]
 
     m.cleanTorrents()
 
-    if tfile == options['monitordir']:
+    print files
+
+    if not files:
         reactor.callLater(10, mainLoop)
     else:
-        readData(tfile)
+        for tfile in files:
+            readData(tfile)
 
 
 def readData(tfile):
