@@ -25,21 +25,22 @@ m = Monitor()
 
 def mainLoop():
     monitordir = os.path.expanduser(options['monitordir'])
-    if monitordir[len(monitordir)-1] != '/':
+    if monitordir[len(monitordir) - 1] != '/':
         monitordir += '/'
 
     files = monitor.checkdirectory(monitordir)
     for i in range(0, len(files)):
         files[i] = monitordir + files[i]
 
-    m.cleanTorrents()
-
     print files
+
+    m.cleanTorrents()
 
     if not files:
         reactor.callLater(10, mainLoop)
     else:
         for tfile in files:
+            print tfile
             readData(tfile)
 
 

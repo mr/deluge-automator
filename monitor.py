@@ -2,7 +2,6 @@ import os
 import string
 
 from deluge.ui.client import client
-from deluge.error import InvalidTorrentError
 
 
 class Monitor(object):
@@ -12,12 +11,17 @@ class Monitor(object):
         self.torrentlist = []
 
     def addTorrent(self, torrent_id):
-        self.torrentlist.append(torrent_id)
+        if torrent_id is not None:
+            self.torrentlist.append(torrent_id)
 
     def cleanTorrents(self):
-        print self.torrentlist
         for torrent_id in self.torrentlist:
-            status = client.core.get_torrent_status(torrent_id, ['tracker_host', 'ratio', 'active_time', 'progress'])
+            status = client.core.get_torrent_status(torrent_id,
+                                                    ['tracker_host',
+                                                     'ratio',
+                                                     'active_time',
+                                                     'progress'])
+
             status.addCallback(self.cleanUp, torrent_id)
 
     def cleanUp(self, status, torrent_id):
@@ -29,12 +33,12 @@ class Monitor(object):
                 break
 
         if status['progress'] == 100.0 and not privatetracker:
-            d = client.core.remove_torrent(torrent_id,
+            client.core.remove_torrent(torrent_id,
                                        False)
-            
+
             self.torrentlist.remove(torrent_id)
             print torrent_id
-        else if privatetracker:
+        elif privatetracker:
             self.torrentlist.remove(torrent_id)
 
 
