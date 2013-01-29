@@ -1,6 +1,13 @@
+Copyright (c) 2013 Matthew Robinson
+
+See the file LICENSE for copying permission.
+
+
+
+
 Allows uploading torrents automatically to a remote deluge client.
 
-Planned to allow cleaning of torrents based on certain rules. Some of this is implemented, but not tested
+Torrents can be cleaned according to tracker and amount completed. Currently, all other trackers than animebytes.es, bakabt.me, bitgameer.su (RIP), speed.cd, and what.cd are removed after completion. There are plans to add functionality to the config, but for now more can be added in the source.
 
 Plan to have other options sent by command line
 
