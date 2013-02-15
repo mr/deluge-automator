@@ -9,10 +9,6 @@ Allows uploading torrents automatically to a remote deluge client.
 
 Torrents can be cleaned according to tracker and amount completed. Currently, all other trackers than animebytes.es, bakabt.me, bitgameer.su (RIP), speed.cd, and what.cd are removed after completion. There are plans to add functionality to the config, but for now more can be added in the source.
 
-Plan to have other options sent by command line
-
-Since I've implemented SIGTERM support correctly in twisted, use supervisord to start and stop the program.
-
 ---------------------------------------------------
 
 Now supports a config file.
@@ -38,3 +34,10 @@ port=1234
 username=mrobinson7627
 password=supersecretpassword
 monitordir=/home/mrobinson7627/Downloads/
+
+--------------------------------------------------
+
+TODO
+    Fix the bug that throws errors (critical)
+    Allow adding other trackers via config
+    Allow optionally downloading downloaded files (now *that's* abstraction) via FTP

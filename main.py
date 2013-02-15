@@ -46,6 +46,7 @@ def mainLoop():
         for tfile in files:
             print tfile
             readData(tfile)
+        reactor.callLater(10, mainLoop())
 
 
 def readData(tfile):
@@ -65,7 +66,6 @@ def on_torrent_added_success(result, tfile):
     print "Torrent added successfully!"
     print "result: ", result
     os.remove(tfile)
-    reactor.callLater(10, mainLoop())
 
 
 def on_torrent_added_fail(result):
