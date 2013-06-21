@@ -1,30 +1,11 @@
-#Copyright (c) 2013 Matthew Robinson
-#
-#See the file LICENSE for copying permission.
-
 import base64
 import os
 
-from monitor import Monitor
-import monitor
-import processargs
+from monitor import monitor
+from run import options, m
 
 from deluge.ui.client import client
 from twisted.internet import reactor
-
-from deluge.log import setupLogger
-setupLogger()
-
-options = processargs.readConfig(os.path.expanduser("~/.deluge-automator"))
-
-d = client.connect(
-    host=options['host'],
-    port=int(options['port']),
-    username=options['username'],
-    password=options['password']
-)
-
-m = Monitor()
 
 
 def mainLoop():
@@ -79,16 +60,6 @@ def on_connect_success(result):
     mainLoop()
 
 
-d.addCallback(on_connect_success)
-
-
 def on_connect_fail(result):
     print "Connection failed!"
     print "result: ", result
-
-
-d.addErrback(on_connect_fail)
-
-reactor.run()
-
-reactor.addSystemEventTrigger('before', 'shutdown', client.disconnect)
