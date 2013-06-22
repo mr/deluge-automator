@@ -1,11 +1,14 @@
 import base64
 import os
 
-from monitor import monitor
-from run import options, m
+from monitor import Monitor, checkdirectory
+import processargs
 
 from deluge.ui.client import client
 from twisted.internet import reactor
+
+m = Monitor()
+options = processargs.readConfig(os.path.expanduser("~/.deluge-automator"))
 
 
 def mainLoop():
@@ -13,11 +16,9 @@ def mainLoop():
     if monitordir[len(monitordir) - 1] != '/':
         monitordir += '/'
 
-    files = monitor.checkdirectory(monitordir)
+    files = checkdirectory(monitordir)
     for i in range(0, len(files)):
         files[i] = monitordir + files[i]
-
-    print files
 
     m.cleanTorrents()
 

@@ -11,7 +11,7 @@ from deluge.ui.client import client
 class Monitor(object):
     def __init__(self):
         self.trackerlist = {"animebyt.es", "bakabt.me",
-                            "bitgamer.su", "speed.cd", "what.cd"}
+                            "speed.cd", "what.cd", "waffles.fm"}
         self.torrentlist = []
 
     def addTorrent(self, torrent_id):
@@ -39,9 +39,7 @@ class Monitor(object):
         if status['progress'] == 100.0 and not privatetracker:
             client.core.remove_torrent(torrent_id,
                                        False)
-
             self.torrentlist.remove(torrent_id)
-            print torrent_id
         elif privatetracker:
             self.torrentlist.remove(torrent_id)
 
