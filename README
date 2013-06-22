@@ -38,6 +38,5 @@ monitordir=/home/mrobinson7627/Downloads/
 --------------------------------------------------
 
 TODO
-    Fix the bug that throws errors (critical)
     Allow adding other trackers via config
     Allow optionally downloading downloaded files (now *that's* abstraction) via FTP
