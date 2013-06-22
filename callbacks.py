@@ -22,13 +22,10 @@ def mainLoop():
 
     m.cleanTorrents()
 
-    if not files:
-        reactor.callLater(10, mainLoop)
-    else:
+    if files:
         for tfile in files:
-            print tfile
             readData(tfile)
-        reactor.callLater(10, mainLoop())
+    reactor.callLater(10, mainLoop)
 
 
 def readData(tfile):
