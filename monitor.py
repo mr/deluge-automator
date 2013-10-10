@@ -11,7 +11,8 @@ from deluge.ui.client import client
 class Monitor(object):
     def __init__(self):
         self.trackerlist = {"animebyt.es", "bakabt.me",
-                            "speed.cd", "what.cd", "waffles.fm"}
+                            "speed.cd", "what.cd", "waffles.fm",
+                            "gazellegames.net"}
         self.torrentlist = []
 
     def addTorrent(self, torrent_id):
