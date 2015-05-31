@@ -9,6 +9,7 @@ from twisted.internet import reactor
 import os
 import string
 import argparse
+import base64
 
 class Monitor(object):
     def __init__(self):
@@ -32,12 +33,8 @@ class Monitor(object):
             status.addCallback(self.cleanUp, torrent_id)
 
     def cleanUp(self, status, torrent_id):
-        privatetracker = False
+        privatetracker = status['tracker_host'] in self.trackerlist
         print status['tracker_host']
-        for j in self.trackerlist:
-            if status['tracker_host'] == j:
-                privatetracker = True
-                break
 
         if status['progress'] == 100.0 and not privatetracker:
             client.core.remove_torrent(torrent_id,
@@ -49,7 +46,8 @@ class Monitor(object):
 
 m = Monitor()
 
-def mainLoop(monitordir):
+def poll_dir(monitordir):
+    directory = os.path.expanduser(monitordir)
     files = [os.path.join(directory, name) for name in os.listdir(directory)
              if name.endswith(".torrent")]
 
@@ -58,7 +56,7 @@ def mainLoop(monitordir):
     if files:
         for tfile in files:
             readData(tfile)
-    reactor.callLater(10, mainLoop)
+    reactor.callLater(10, poll_dir)
 
 
 def readData(tfile):
@@ -88,7 +86,7 @@ def on_torrent_added_fail(result):
 def on_connect_success(result, monitordir):
     print "Connection was successful!"
     print "result: ", result
-    mainLoop(monitordir)
+    poll_dir(monitordir)
 
 
 def on_connect_fail(result):
