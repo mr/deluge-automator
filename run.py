@@ -6,7 +6,9 @@
 from deluge.ui.client import client
 from twisted.internet import reactor
 
+import os
 import string
+import argparse
 
 class Monitor(object):
     def __init__(self):
@@ -45,39 +47,11 @@ class Monitor(object):
             self.torrentlist.remove(torrent_id)
 
 
-def checkdirectory(directory):
-    contents = os.listdir(directory)
-    files = []
-    for i in contents:
-        if string.find(i, ".torrent") > 0:
-            files.append(i)
-    return files
-
 m = Monitor()
 
-def readConfig(config):
-    f = open(config, "r")
-    options = {}
-
-    for line in f:
-        if string.find(line, '#') != 0 or string.find(line, '\n') != 0:
-            equals = string.find(line, "=")
-            options[line[:equals]] = line[equals + 1:len(line) - 1]
-
-    f.close()
-
-    return options
-
-options = readConfig(os.path.expanduser("~/.deluge-automator"))
-
-def mainLoop():
-    monitordir = os.path.expanduser(options['monitordir'])
-    if monitordir[len(monitordir) - 1] != '/':
-        monitordir += '/'
-
-    files = checkdirectory(monitordir)
-    for i in range(0, len(files)):
-        files[i] = monitordir + files[i]
+def mainLoop(monitordir):
+    files = [os.path.join(directory, name) for name in os.listdir(directory)
+             if name.endswith(".torrent")]
 
     m.cleanTorrents()
 
@@ -111,26 +85,37 @@ def on_torrent_added_fail(result):
     print "result: ", result
 
 
-def on_connect_success(result):
+def on_connect_success(result, monitordir):
     print "Connection was successful!"
     print "result: ", result
-    mainLoop()
+    mainLoop(monitordir)
 
 
 def on_connect_fail(result):
     print "Connection failed!"
     print "result: ", result
 
-d = client.connect(
-    host=options['host'],
-    port=int(options['port']),
-    username=options['username'],
-    password=options['password']
-)
 
-d.addCallback(on_connect_success)
-d.addErrback(on_connect_fail)
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Manage a remote deluge instance easily")
+    parser.add_argument('-H', '--host', default="localhost")
+    parser.add_argument('-P', '--port', default=44103)
+    parser.add_argument('-u', '--username')
+    parser.add_argument('-p', '--password')
+    parser.add_argument('-d', '--monitordir', default="~/downloads")
 
-reactor.run()
+    args = parser.parse_args()
 
-reactor.addSystemEventTrigger('before', 'shutdown', client.disconnect)
+    d = client.connect(
+        host=args.host,
+        port=args.port,
+        username=args.username,
+        password=args.password
+    )
+
+    d.addCallback(on_connect_success, args.monitordir)
+    d.addErrback(on_connect_fail)
+
+    reactor.run()
+
+    reactor.addSystemEventTrigger('before', 'shutdown', client.disconnect)
